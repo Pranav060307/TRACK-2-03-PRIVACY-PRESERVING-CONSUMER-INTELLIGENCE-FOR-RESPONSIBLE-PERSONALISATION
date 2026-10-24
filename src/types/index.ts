@@ -54,7 +54,7 @@ export interface StoreCohort {
   laplaceNoise: number;
   kAnonymity: number;
   averageSpend: number;
-  trend: '+14%' | '+8%' | '+22%' | '-3%';
+  trend: string;
 }
 
 export interface MerchantKPIs {
