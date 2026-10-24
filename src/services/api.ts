@@ -1,4 +1,6 @@
-const API_BASE_URL = 'http://127.0.0.1:5000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? '/api' : 'http://127.0.0.1:5000/api');
 
 export interface HealthResponse {
   status: string;
@@ -105,6 +107,50 @@ export interface ReidentificationPoint {
   cohortLensIdentifiedPct: number;
 }
 
+export interface GateValidation {
+  id: string;
+  name: string;
+  category: 'Data Boundary' | 'Consent' | 'Transformation' | 'Privacy Threshold';
+  ruleDescription: string;
+  inspectedRecordsCount: number;
+  violationsFound: number;
+  status: 'PASSED' | 'FAILED';
+  auditDetail: string;
+}
+
+export interface PreModellingGateResponse {
+  overallStatus: 'ALL_GATES_PASSED' | 'GATE_VIOLATION_BLOCKED';
+  timestamp: string;
+  gates: GateValidation[];
+}
+
+export interface BlindSendResolution {
+  dispatchId: string;
+  actionId: string;
+  channel: 'WhatsApp' | 'SMS';
+  targetCohort: string;
+  timestamp: string;
+  enclaveStatus: string;
+  totalEligibleCohortMembers: number;
+  unconsentedSkippedCount: number;
+  actualDispatchedCount: number;
+  maskedAuditSample: {
+    pseudonymousHashPreview: string;
+    channelConsentVerified: string;
+    ephemeralMaskedDestination: string;
+    deliveryStatus: string;
+  }[];
+  privacyAssurance: string;
+}
+
+export interface ConsentLedgerEvent {
+  id: string;
+  phoneHash: string;
+  purpose: string;
+  action: string;
+  timestamp: string;
+}
+
 export const api = {
   async getHealth(): Promise<HealthResponse> {
     const res = await fetch(`${API_BASE_URL}/health`);
@@ -155,6 +201,50 @@ export const api = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ actionId })
+    });
+    return res.json();
+  },
+
+  async executeBlindSend(actionId: string): Promise<{ success: boolean; resolution: BlindSendResolution }> {
+    const res = await fetch(`${API_BASE_URL}/ai/blind-send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ actionId })
+    });
+    return res.json();
+  },
+
+  async getPreModellingGates(): Promise<PreModellingGateResponse> {
+    const res = await fetch(`${API_BASE_URL}/gates/pre-modelling`);
+    return res.json();
+  },
+
+  async getConsentLedger(): Promise<{ totalEvents: number; recentEvents: ConsentLedgerEvent[] }> {
+    const res = await fetch(`${API_BASE_URL}/consent/ledger`);
+    return res.json();
+  },
+
+  async sendOtp(phone: string): Promise<{ success: boolean; message: string; demoOtp: string }> {
+    const res = await fetch(`${API_BASE_URL}/consent/send-otp`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    return res.json();
+  },
+
+  async verifyOtpDelete(phone: string, otp: string): Promise<{
+    success: boolean;
+    step: string;
+    phoneHash: string;
+    workflow: string[];
+    erasureReceiptHash: string;
+    timestamp: string;
+  }> {
+    const res = await fetch(`${API_BASE_URL}/consent/verify-otp-delete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, otp })
     });
     return res.json();
   },

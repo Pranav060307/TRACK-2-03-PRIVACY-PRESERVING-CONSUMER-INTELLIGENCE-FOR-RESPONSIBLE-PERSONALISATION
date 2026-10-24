@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  cohortlens-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cohortlens-production
+    restart: always
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
+      - HOST=0.0.0.0
+      - CORS_ORIGIN=${CORS_ORIGIN:-*}
+      - VITE_API_URL=${VITE_API_URL:-/api}
+      - HMAC_SECRET_SALT=${HMAC_SECRET_SALT:-production_secure_salt_value_here}
+      - DP_EPSILON=${DP_EPSILON:-0.5}
+      - K_ANONYMITY_THRESHOLD=${K_ANONYMITY_THRESHOLD:-10}
+      - OTP_EXPIRY_MS=${OTP_EXPIRY_MS:-300000}
+    env_file:
+      - .env

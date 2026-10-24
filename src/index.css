@@ -1,6 +1,6 @@
 /* =====================================================================
-   ÆGIS RETAIL & PRIVACY INTELLIGENCE
-   Minimal, Decent, Realistic Design System (No AI Clichés)
+   ÆGIS RETAIL & PRIVACY INTELLIGENCE (COHORTLENS)
+   Mobile-First, Zero-Friction Design System
    ===================================================================== */
 
 :root {
@@ -29,11 +29,11 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Clean minimal radius */
-  --radius-xs: 4px;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* Touch & Radius */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -42,7 +42,7 @@
 }
 
 /* -------------------------------------------------------------
-   LIGHT THEME (Clean, Minimal, Realistic Editorial/Warm)
+   LIGHT THEME (Clean, Minimal, Realistic Kirana Store)
    ------------------------------------------------------------- */
 [data-theme='light'] {
   --bg-app: var(--color-cream-warm);
@@ -69,12 +69,13 @@
   --badge-text: var(--color-royal-blue);
   --badge-border: rgba(29, 78, 216, 0.2);
 
-  --shadow-card: 0 1px 3px rgba(5, 12, 12, 0.05), 0 4px 12px rgba(5, 12, 12, 0.03);
+  --shadow-card: 0 1px 3px rgba(5, 12, 12, 0.05), 0 3px 10px rgba(5, 12, 12, 0.03);
   --shadow-elevated: 0 8px 24px rgba(5, 12, 12, 0.08);
+  --shadow-bottom-bar: 0 -4px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* -------------------------------------------------------------
-   DARK THEME (Deep Navy & Clean Subtle Luxury)
+   DARK THEME (Deep Navy & Clean Minimalist Luxury)
    ------------------------------------------------------------- */
 [data-theme='dark'] {
   --bg-app: var(--color-navy-dark);
@@ -101,26 +102,29 @@
   --badge-text: var(--color-sky-light);
   --badge-border: rgba(37, 99, 235, 0.3);
 
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.2), 0 4px 14px rgba(0, 0, 0, 0.25);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.25), 0 4px 14px rgba(0, 0, 0, 0.2);
   --shadow-elevated: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-bottom-bar: 0 -4px 20px rgba(0, 0, 0, 0.35);
 }
 
 /* -------------------------------------------------------------
-   BASE RESETS
+   BASE RESETS & MOBILE TOUCH
    ------------------------------------------------------------- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html, body {
   font-family: var(--font-sans);
   background-color: var(--bg-app);
   color: var(--text-main);
-  line-height: 1.5;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 button {
@@ -128,11 +132,17 @@ button {
   cursor: pointer;
   border: none;
   background: none;
-  transition: all var(--transition-fast);
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+  touch-action: manipulation;
+}
+
+button:active {
+  transform: scale(0.98);
 }
 
 input, select, textarea {
   font-family: inherit;
+  font-size: 16px; /* Prevents auto-zoom on iOS safari */
 }
 
 a {
@@ -147,19 +157,26 @@ a {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-bottom: 84px; /* Space for mobile bottom bar */
+}
+
+@media (min-width: 769px) {
+  .app-container {
+    padding-bottom: 0;
+  }
 }
 
 .main-content {
-  max-width: 1280px;
+  max-width: 1240px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px 16px 80px 16px;
+  padding: 20px 16px 60px 16px;
   flex: 1;
 }
 
 @media (min-width: 768px) {
   .main-content {
-    padding: 32px 24px 64px 24px;
+    padding: 30px 24px 64px 24px;
   }
 }
 
@@ -171,40 +188,37 @@ a {
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.card:hover {
-  border-color: rgba(37, 99, 235, 0.4);
 }
 
 .card-padded {
-  padding: 20px;
+  padding: 20px 18px;
 }
 
 @media (min-width: 768px) {
   .card-padded {
-    padding: 24px;
+    padding: 26px 24px;
   }
 }
 
 /* -------------------------------------------------------------
-   BUTTONS (Minimal, clean, decent)
+   BUTTONS (Touch friendly >= 44px)
    ------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 9px 16px;
+  min-height: 42px;
+  padding: 8px 16px;
   border-radius: var(--radius-sm);
-  font-size: 0.88rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   line-height: 1.25;
   white-space: nowrap;
 }
 
 .btn-sm {
+  min-height: 34px;
   padding: 6px 12px;
   font-size: 0.8rem;
   border-radius: var(--radius-xs);
@@ -228,7 +242,17 @@ a {
 
 .btn-secondary:hover {
   background: var(--bg-surface-subtle);
-  border-color: var(--text-muted);
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: #FFFFFF;
+  border: 1px solid #1EBE5D;
+  font-weight: 600;
+}
+
+.btn-whatsapp:hover {
+  background: #20BA5A;
 }
 
 .btn-outline-gold {
@@ -237,31 +261,17 @@ a {
   border: 1px solid var(--accent-gold);
 }
 
-.btn-outline-gold:hover {
-  background: rgba(245, 158, 11, 0.1);
-}
-
-.btn-forest {
-  background: var(--color-forest-dark);
-  color: #FFFFFF;
-  border: 1px solid var(--color-forest-sec);
-}
-
-.btn-forest:hover {
-  background: var(--color-forest-sec);
-}
-
 /* -------------------------------------------------------------
    BADGES & PILLS
    ------------------------------------------------------------- */
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
+  gap: 4px;
+  padding: 4px 8px;
   border-radius: var(--radius-xs);
   font-size: 0.74rem;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .tag-privacy {
@@ -293,13 +303,13 @@ a {
    ------------------------------------------------------------- */
 .form-input {
   width: 100%;
-  padding: 10px 12px;
+  min-height: 42px;
+  padding: 9px 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   color: var(--text-main);
-  font-size: 0.88rem;
-  transition: border-color var(--transition-fast);
+  font-size: 0.9rem;
 }
 
 .form-input:focus {
@@ -312,7 +322,7 @@ input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 5px;
+  height: 6px;
   background: var(--border-color);
   border-radius: 999px;
   outline: none;
@@ -321,8 +331,8 @@ input[type="range"] {
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--primary);
   border: 2px solid var(--bg-surface);
@@ -334,8 +344,8 @@ input[type="range"]::-webkit-slider-thumb {
 .toggle-switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 48px;
+  height: 26px;
   flex-shrink: 0;
 }
 
@@ -357,13 +367,13 @@ input[type="range"]::-webkit-slider-thumb {
 .toggle-track::before {
   content: "";
   position: absolute;
-  height: 18px;
-  width: 18px;
+  height: 20px;
+  width: 20px;
   left: 3px;
   bottom: 3px;
   background-color: #FFFFFF;
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.25);
   transition: var(--transition-fast);
 }
 
@@ -372,7 +382,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .toggle-switch input:checked + .toggle-track::before {
-  transform: translateX(20px);
+  transform: translateX(22px);
 }
 
 /* -------------------------------------------------------------
@@ -381,33 +391,130 @@ input[type="range"]::-webkit-slider-thumb {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(7, 19, 36, 0.65);
+  background: rgba(7, 19, 36, 0.7);
   backdrop-filter: blur(4px);
   z-index: 1000;
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Drawer style on mobile */
   justify-content: center;
-  padding: 16px;
+  padding: 0;
+}
+
+@media (min-width: 640px) {
+  .modal-backdrop {
+    align-items: center;
+    padding: 16px;
+  }
 }
 
 .modal-card {
   background: var(--bg-surface-elevated);
   border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
+  border-radius: 20px 20px 0 0; /* Bottom sheet on mobile */
   box-shadow: var(--shadow-elevated);
-  max-width: 560px;
+  max-width: 580px;
   width: 100%;
-  max-height: 90vh;
+  max-height: 85vh;
   overflow-y: auto;
-  padding: 24px;
+  padding: 20px 16px;
+  animation: slideUp 200ms ease;
+}
+
+@media (min-width: 640px) {
+  .modal-card {
+    border-radius: var(--radius-md);
+    padding: 24px;
+    animation: fadeIn 150ms ease;
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* -------------------------------------------------------------
+   MOBILE BOTTOM NAVIGATION BAR
+   ------------------------------------------------------------- */
+.mobile-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background-color: var(--bg-surface-elevated);
+  border-top: 1px solid var(--border-color);
+  box-shadow: var(--shadow-bottom-bar);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 900;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+@media (min-width: 769px) {
+  .mobile-bottom-bar {
+    display: none;
+  }
+}
+
+.nav-item-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  height: 100%;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  font-weight: 500;
+  position: relative;
+}
+
+.nav-item-btn.active {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+/* Floating mobile cart pill */
+.floating-cart-pill {
+  position: fixed;
+  bottom: 74px;
+  left: 12px;
+  right: 12px;
+  background: var(--primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.4);
+  z-index: 850;
+  font-weight: 600;
+  font-size: 0.92rem;
+  animation: slideUp 200ms ease;
+}
+
+@media (min-width: 769px) {
+  .floating-cart-pill {
+    display: none;
+  }
 }
 
 /* Toast */
 .toast-box {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  left: 20px;
+  bottom: 74px;
+  right: 16px;
+  left: 16px;
   z-index: 2000;
   display: flex;
   flex-direction: column;
@@ -417,8 +524,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 @media (min-width: 640px) {
   .toast-box {
+    bottom: 24px;
     left: auto;
-    width: 380px;
+    width: 360px;
   }
 }
 
@@ -428,29 +536,53 @@ input[type="range"]::-webkit-slider-thumb {
   border: 1px solid var(--border-color);
   border-left: 4px solid var(--primary);
   border-radius: var(--radius-sm);
-  padding: 12px 16px;
-  font-size: 0.85rem;
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  font-weight: 500;
   color: var(--text-main);
   box-shadow: var(--shadow-elevated);
 }
 
-/* Grid helper */
+/* Responsive product grid: 2 cols on mobile, 3 on tablet, 4 on desktop with generous breathing room */
 .grid-products {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-@media (min-width: 580px) {
+@media (min-width: 600px) {
   .grid-products {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
 }
 
 @media (min-width: 980px) {
   .grid-products {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 24px;
   }
 }
+
+/* Horizontal chip scroller with smooth touch */
+.chips-scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chips-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.drawer-drag-handle {
+  width: 44px;
+  height: 5px;
+  background-color: var(--border-color);
+  border-radius: 999px;
+  margin: 0 auto 16px auto;
+}
+

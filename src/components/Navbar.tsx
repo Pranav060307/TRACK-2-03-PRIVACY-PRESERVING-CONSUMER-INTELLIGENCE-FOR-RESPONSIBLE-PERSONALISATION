@@ -7,7 +7,8 @@ import {
   Moon, 
   Menu, 
   X,
-  Lock
+  Lock,
+  Globe
 } from 'lucide-react';
 import type { AppPanel, ThemeMode } from '../types';
 
@@ -19,6 +20,8 @@ interface NavbarProps {
   cartCount: number;
   onOpenCart: () => void;
   onOpenPrivacyModal: () => void;
+  lang?: 'mr' | 'hi' | 'en';
+  setLang?: (lang: 'mr' | 'hi' | 'en') => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -28,9 +31,49 @@ export const Navbar: React.FC<NavbarProps> = ({
   setTheme,
   cartCount,
   onOpenCart,
-  onOpenPrivacyModal
+  onOpenPrivacyModal,
+  lang = 'mr',
+  setLang
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const t = {
+    topBarPrivacy: {
+      mr: 'झिरो-ट्रॅकिंग कुकीज • DPDP Act २०२३ खाजगी सुरक्षा',
+      hi: 'शून्य ट्रैकिंग कुकीज • DPDP Act २०२३ निजी सुरक्षा',
+      en: 'Zero third-party tracking cookies • DPDP Act 2023 Compliant'
+    },
+    privacyVault: {
+      mr: 'माझी गोपनीयता (Vault)',
+      hi: 'मेरी गोपनीयता (Vault)',
+      en: 'Privacy Vault'
+    },
+    brandTitle: {
+      mr: 'श्री गणेश किराणा',
+      hi: 'श्री गणेश किराना',
+      en: 'ÆGIS &bull; Ganesh Kirana'
+    },
+    brandSub: {
+      mr: 'CohortLens जबाबदार वैयक्तिकरण',
+      hi: 'CohortLens जिम्मेदार वैयक्तिकरण',
+      en: 'CohortLens Privacy Personalisation'
+    },
+    customerTab: {
+      mr: 'ग्राहक दुकान',
+      hi: 'ग्राहक दुकान',
+      en: 'Customer Store'
+    },
+    ownerTab: {
+      mr: 'दुकानदार पोर्टल',
+      hi: 'दुकानदार पोर्टल',
+      en: 'Shop Owner'
+    },
+    cartLabel: {
+      mr: 'पिशवी',
+      hi: 'थैला',
+      en: 'Cart'
+    }
+  };
 
   return (
     <header style={{
@@ -59,10 +102,32 @@ export const Navbar: React.FC<NavbarProps> = ({
             borderRadius: '50%',
             backgroundColor: '#10B981'
           }} />
-          <span>Zero third-party tracking cookies &bull; GDPR &amp; CCPA Privacy-by-Design</span>
+          <span>{t.topBarPrivacy[lang]}</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {setLang && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+              <Globe size={11} style={{ marginRight: '2px', color: 'var(--text-muted)' }} />
+              {(['mr', 'hi', 'en'] as const).map(l => (
+                <button
+                  key={l}
+                  onClick={() => setLang(l)}
+                  style={{
+                    fontSize: '0.72rem',
+                    padding: '1px 5px',
+                    fontWeight: lang === l ? 700 : 400,
+                    color: lang === l ? 'var(--primary)' : 'var(--text-muted)',
+                    backgroundColor: lang === l ? 'rgba(29, 78, 216, 0.08)' : 'transparent',
+                    borderRadius: '4px'
+                  }}
+                >
+                  {l === 'mr' ? 'मराठी' : l === 'hi' ? 'हिन्दी' : 'EN'}
+                </button>
+              ))}
+            </div>
+          )}
+
           <button
             onClick={onOpenPrivacyModal}
             style={{
@@ -75,7 +140,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
           >
             <Lock size={12} />
-            <span>My Privacy Vault</span>
+            <span>{t.privacyVault[lang]}</span>
           </button>
         </div>
       </div>
@@ -84,14 +149,14 @@ export const Navbar: React.FC<NavbarProps> = ({
       <div style={{
         maxWidth: '1280px',
         margin: '0 auto',
-        padding: '12px 16px',
+        padding: '10px 16px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: '16px'
       }}>
         {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
             width: 36,
             height: 36,
@@ -107,11 +172,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             &AElig;
           </div>
           <div>
-            <div style={{ fontWeight: 700, fontSize: '1.05rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-              &AElig;GIS RETAIL
+            <div style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
+              {t.brandTitle[lang]}
             </div>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-              Privacy-Preserving Personalisation
+              {t.brandSub[lang]}
             </div>
           </div>
         </div>
@@ -135,7 +200,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
           >
             <User size={14} />
-            <span>Customer Store</span>
+            <span>{t.customerTab[lang]}</span>
           </button>
 
           <button
@@ -147,7 +212,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             }}
           >
             <Store size={14} />
-            <span>Shop Owner Portal</span>
+            <span>{t.ownerTab[lang]}</span>
           </button>
         </div>
 
@@ -161,7 +226,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label="Shopping Cart"
             >
               <ShoppingBag size={16} />
-              <span>Cart</span>
+              <span>{t.cartLabel[lang]}</span>
               {cartCount > 0 && (
                 <span style={{
                   backgroundColor: 'var(--primary)',
@@ -211,7 +276,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           gap: '12px'
         }}>
           <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
-            Switch View
+            {lang === 'mr' ? 'विभाग निवडा' : lang === 'hi' ? 'विभाग चुनें' : 'Switch View'}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
             <button
@@ -223,11 +288,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 backgroundColor: currentPanel === 'customer' ? 'var(--primary)' : 'var(--bg-surface-subtle)',
                 color: currentPanel === 'customer' ? '#FFFFFF' : 'var(--text-main)',
-                border: '1px solid var(--border-color)'
+                border: '1px solid var(--border-color)',
+                minHeight: '38px'
               }}
             >
               <User size={14} />
-              <span>Customer Store</span>
+              <span>{t.customerTab[lang]}</span>
             </button>
 
             <button
@@ -239,11 +305,12 @@ export const Navbar: React.FC<NavbarProps> = ({
               style={{
                 backgroundColor: currentPanel === 'shop-owner' ? 'var(--primary)' : 'var(--bg-surface-subtle)',
                 color: currentPanel === 'shop-owner' ? '#FFFFFF' : 'var(--text-main)',
-                border: '1px solid var(--border-color)'
+                border: '1px solid var(--border-color)',
+                minHeight: '38px'
               }}
             >
               <Store size={14} />
-              <span>Shop Owner</span>
+              <span>{t.ownerTab[lang]}</span>
             </button>
           </div>
 
@@ -253,10 +320,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               setMobileMenuOpen(false);
             }}
             className="btn btn-secondary btn-sm"
-            style={{ justifyContent: 'flex-start', marginTop: '6px' }}
+            style={{ justifyContent: 'flex-start', marginTop: '6px', minHeight: '38px' }}
           >
             <Lock size={14} style={{ color: 'var(--primary)' }} />
-            <span>Open Privacy Controls Vault</span>
+            <span>{t.privacyVault[lang]}</span>
           </button>
         </div>
       )}
